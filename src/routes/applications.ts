@@ -3,8 +3,20 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { Application, IApplication } from '../models/Application';
+import { isDBConnected } from '../database';
 
 const router = express.Router();
+
+// Database check middleware
+const checkDB = (req: Request, res: Response, next: Function) => {
+  if (!isDBConnected()) {
+    return res.status(503).json({ 
+      error: 'Database connection not available. Please check MONGODB_URI environment variable.',
+      hint: 'Set MONGODB_URI in your environment variables'
+    });
+  }
+  next();
+};
 
 // Configure multer for file uploads
 const uploadDir = 'uploads';
@@ -40,7 +52,7 @@ const upload = multer({
 });
 
 // Create a new job application
-router.post('/applications', (req: Request, res: Response, next) => {
+router.post('/applications', checkDB, (req: Request, res: Response, next) => {
   upload.single('resume')(req, res, (err: any) => {
     if (err) {
       if (err.code === 'LIMIT_FILE_SIZE') {
@@ -98,7 +110,7 @@ router.post('/applications', (req: Request, res: Response, next) => {
 });
 
 // Get all applications
-router.get('/applications', async (_req: Request, res: Response) => {
+router.get('/applications', checkDB, async (_req: Request, res: Response) => {
   try {
     const applications = await Application.find().sort({ createdAt: -1 });
     res.json({
@@ -113,7 +125,7 @@ router.get('/applications', async (_req: Request, res: Response) => {
 });
 
 // Get a single application by ID
-router.get('/applications/:id', async (req: Request, res: Response) => {
+router.get('/applications/:id', checkDB, async (req: Request, res: Response) => {
   try {
     const application = await Application.findById(req.params.id);
 
@@ -132,7 +144,7 @@ router.get('/applications/:id', async (req: Request, res: Response) => {
 });
 
 // Download resume
-router.get('/applications/:id/resume', async (req: Request, res: Response) => {
+router.get('/applications/:id/resume', checkDB, async (req: Request, res: Response) => {
   try {
     const application = await Application.findById(req.params.id);
 
@@ -152,7 +164,7 @@ router.get('/applications/:id/resume', async (req: Request, res: Response) => {
 });
 
 // Update an application
-router.put('/applications/:id', (req: Request, res: Response, next) => {
+router.put('/applications/:id', checkDB, (req: Request, res: Response, next) => {
   upload.single('resume')(req, res, (err: any) => {
     if (err) {
       if (err.code === 'LIMIT_FILE_SIZE') {
@@ -221,7 +233,7 @@ router.put('/applications/:id', (req: Request, res: Response, next) => {
 });
 
 // Delete an application
-router.delete('/applications/:id', async (req: Request, res: Response) => {
+router.delete('/applications/:id', checkDB, async (req: Request, res: Response) => {
   try {
     const application = await Application.findByIdAndDelete(req.params.id);
 

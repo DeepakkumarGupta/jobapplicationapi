@@ -47,15 +47,34 @@ app.use((_err: any, _req: express.Request, res: express.Response, _next: express
 // Start server
 const startServer = async () => {
   try {
+    console.log('🚀 Starting Job Application API...');
+    console.log(`📝 Environment: ${config.nodeEnv}`);
+    console.log(`📍 Port: ${config.port}`);
+
+    // Connect to database with timeout
     await connectDB();
 
-    app.listen(config.port, () => {
-      console.log(`✓ Server running on http://localhost:${config.port}`);
-      console.log(`✓ Environment: ${config.nodeEnv}`);
+    const server = app.listen(config.port, () => {
+      console.log(`✅ Server running on http://localhost:${config.port}`);
+      console.log(`🏥 Health check: http://localhost:${config.port}/health`);
     });
+
+    // Graceful shutdown
+    process.on('SIGTERM', async () => {
+      console.log('\n📴 Shutting down gracefully...');
+      server.close(() => {
+        console.log('✓ Server closed');
+        process.exit(0);
+      });
+    });
+
   } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
+    console.error('❌ Failed to start server:', error);
+    console.error('ℹ️ The server will still try to run without database');
+    // Don't exit - let it continue
+    const server = app.listen(config.port, () => {
+      console.log(`✅ Server running (without database) on http://localhost:${config.port}`);
+    });
   }
 };
 

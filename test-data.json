@@ -1,0 +1,225 @@
+{
+  "testData": {
+    "candidates": [
+      {
+        "id": "candidate_1",
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "resume": "resume1.pdf",
+        "description": "Senior Software Engineer with 5+ years experience"
+      },
+      {
+        "id": "candidate_2",
+        "name": "Jane Smith",
+        "email": "jane.smith@example.com",
+        "resume": "resume2.pdf",
+        "description": "Full Stack Developer with React and Node.js expertise"
+      },
+      {
+        "id": "candidate_3",
+        "name": "Bob Johnson",
+        "email": "bob.johnson@example.com",
+        "resume": "resume3.pdf",
+        "description": "DevOps Engineer with Kubernetes and AWS experience"
+      },
+      {
+        "id": "candidate_4",
+        "name": "Alice Williams",
+        "email": "alice.williams@example.com",
+        "resume": "resume4.pdf",
+        "description": "QA Automation Specialist with 3+ years experience"
+      },
+      {
+        "id": "candidate_5",
+        "name": "Charlie Brown",
+        "email": "charlie.brown@example.com",
+        "resume": "resume5.pdf",
+        "description": "Data Scientist specializing in Machine Learning"
+      }
+    ],
+    "updateScenarios": [
+      {
+        "id": "update_1",
+        "targetCandidate": "candidate_1",
+        "updates": {
+          "name": "John Doe Updated",
+          "email": "john.doe.updated@example.com"
+        },
+        "description": "Update name and email only"
+      },
+      {
+        "id": "update_2",
+        "targetCandidate": "candidate_1",
+        "updates": {
+          "resume": "resume_updated.pdf"
+        },
+        "description": "Update resume only"
+      }
+    ]
+  },
+  "testSequences": {
+    "basicFlow": [
+      {
+        "step": 1,
+        "name": "Health Check",
+        "method": "GET",
+        "endpoint": "/health",
+        "expectedStatus": 200,
+        "description": "Verify server is running"
+      },
+      {
+        "step": 2,
+        "name": "Create Application",
+        "method": "POST",
+        "endpoint": "/api/applications",
+        "body": {
+          "name": "John Doe",
+          "email": "john.doe@example.com",
+          "resume": "resume1.pdf"
+        },
+        "expectedStatus": 201,
+        "description": "Create first job application",
+        "saveResponse": "app_1"
+      },
+      {
+        "step": 3,
+        "name": "Get All Applications",
+        "method": "GET",
+        "endpoint": "/api/applications",
+        "expectedStatus": 200,
+        "description": "Retrieve all applications"
+      },
+      {
+        "step": 4,
+        "name": "Get Single Application",
+        "method": "GET",
+        "endpoint": "/api/applications/{app_1_id}",
+        "expectedStatus": 200,
+        "description": "Get specific application"
+      },
+      {
+        "step": 5,
+        "name": "Update Application",
+        "method": "PUT",
+        "endpoint": "/api/applications/{app_1_id}",
+        "body": {
+          "name": "John Doe Updated",
+          "email": "john.doe.updated@example.com"
+        },
+        "expectedStatus": 200,
+        "description": "Update application details"
+      },
+      {
+        "step": 6,
+        "name": "Download Resume",
+        "method": "GET",
+        "endpoint": "/api/applications/{app_1_id}/resume",
+        "expectedStatus": 200,
+        "description": "Download resume PDF"
+      },
+      {
+        "step": 7,
+        "name": "Delete Application",
+        "method": "DELETE",
+        "endpoint": "/api/applications/{app_1_id}",
+        "expectedStatus": 200,
+        "description": "Delete application"
+      }
+    ],
+    "multipleApplicationsFlow": [
+      {
+        "step": 1,
+        "name": "Create 3 Applications",
+        "applications": [
+          {
+            "name": "Jane Smith",
+            "email": "jane.smith@example.com",
+            "resume": "resume2.pdf"
+          },
+          {
+            "name": "Bob Johnson",
+            "email": "bob.johnson@example.com",
+            "resume": "resume3.pdf"
+          },
+          {
+            "name": "Alice Williams",
+            "email": "alice.williams@example.com",
+            "resume": "resume4.pdf"
+          }
+        ]
+      },
+      {
+        "step": 2,
+        "name": "Get All 3 Applications",
+        "endpoint": "/api/applications",
+        "expectedCount": 3
+      },
+      {
+        "step": 3,
+        "name": "Delete one application",
+        "description": "Delete the second application"
+      }
+    ]
+  },
+  "errorTestCases": [
+    {
+      "name": "Missing Name",
+      "method": "POST",
+      "endpoint": "/api/applications",
+      "body": {
+        "email": "test@example.com",
+        "resume": "resume.pdf"
+      },
+      "expectedStatus": 400,
+      "expectedError": "Name and email are required"
+    },
+    {
+      "name": "Missing Email",
+      "method": "POST",
+      "endpoint": "/api/applications",
+      "body": {
+        "name": "John Doe",
+        "resume": "resume.pdf"
+      },
+      "expectedStatus": 400,
+      "expectedError": "Name and email are required"
+    },
+    {
+      "name": "Missing Resume",
+      "method": "POST",
+      "endpoint": "/api/applications",
+      "body": {
+        "name": "John Doe",
+        "email": "john@example.com"
+      },
+      "expectedStatus": 400,
+      "expectedError": "Resume file is required"
+    },
+    {
+      "name": "Invalid Email Format",
+      "method": "POST",
+      "endpoint": "/api/applications",
+      "body": {
+        "name": "John Doe",
+        "email": "not-an-email",
+        "resume": "resume.pdf"
+      },
+      "expectedStatus": 400,
+      "expectedError": "Please provide a valid email"
+    },
+    {
+      "name": "Invalid Application ID",
+      "method": "GET",
+      "endpoint": "/api/applications/invalid-id-12345",
+      "expectedStatus": 404,
+      "expectedError": "Application not found"
+    },
+    {
+      "name": "Delete Non-existent Application",
+      "method": "DELETE",
+      "endpoint": "/api/applications/invalid-id-12345",
+      "expectedStatus": 404,
+      "expectedError": "Application not found"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "Job Application API",
+  "dateExport": "2024-01-16",
+  "version": "1.1",
+  "folders": [
+    {
+      "name": "Health & Info",
+      "requests": [
+        {
+          "name": "Health Check",
+          "method": "GET",
+          "url": "http://localhost:3000/health"
+        },
+        {
+          "name": "API Info",
+          "method": "GET",
+          "url": "http://localhost:3000/"
+        }
+      ]
+    },
+    {
+      "name": "Applications",
+      "requests": [
+        {
+          "name": "Create Application",
+          "method": "POST",
+          "url": "http://localhost:3000/api/applications",
+          "headers": {},
+          "body": {
+            "type": "formdata",
+            "formdata": [
+              {
+                "key": "name",
+                "value": "John Doe",
+                "type": "text"
+              },
+              {
+                "key": "email",
+                "value": "john@example.com",
+                "type": "text"
+              },
+              {
+                "key": "resume",
+                "value": "path/to/resume.pdf",
+                "type": "file"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Get All Applications",
+          "method": "GET",
+          "url": "http://localhost:3000/api/applications"
+        },
+        {
+          "name": "Get Single Application",
+          "method": "GET",
+          "url": "http://localhost:3000/api/applications/{{applicationId}}"
+        },
+        {
+          "name": "Download Resume",
+          "method": "GET",
+          "url": "http://localhost:3000/api/applications/{{applicationId}}/resume"
+        },
+        {
+          "name": "Update Application",
+          "method": "PUT",
+          "url": "http://localhost:3000/api/applications/{{applicationId}}",
+          "body": {
+            "type": "formdata",
+            "formdata": [
+              {
+                "key": "name",
+                "value": "Jane Doe",
+                "type": "text"
+              },
+              {
+                "key": "email",
+                "value": "jane@example.com",
+                "type": "text"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Delete Application",
+          "method": "DELETE",
+          "url": "http://localhost:3000/api/applications/{{applicationId}}"
+        }
+      ]
+    }
+  ]
+}

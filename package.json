@@ -4,7 +4,10 @@
   "description": "Express TypeScript API for job applications with resume upload",
   "main": "dist/index.js",
   "scripts": {
+    "prebuild": "echo 'Preparing build...'",
     "build": "tsc",
+    "postbuild": "echo 'Build complete'",
+    "postinstall": "npm run build || true",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "watch": "tsc --watch",
